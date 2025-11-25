@@ -3,7 +3,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.post('/auth', authRouter);
+router.use('/auth', authRouter);
 
 const commonRoute = router;
 export default commonRoute;
