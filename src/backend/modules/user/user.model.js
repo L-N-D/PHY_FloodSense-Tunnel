@@ -3,9 +3,18 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema (
     {
         email: String,
-        password: {type: String, require: true},
-        username: {type: String, require: true, unique: true}
+        password: {type: String, required: true},
+        username: {type: String, required: true, unique: true},
+        tokens: [
+            {
+                token: String,
+                type: String,
+                createdAt: {type: Date, default: Date.now},
+                expiresAt: Date
+            }
+        ]
     }
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;

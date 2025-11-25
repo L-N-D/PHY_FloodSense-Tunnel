@@ -1,12 +1,12 @@
-import app from './app';
+import app from './app.js'
 import dotenv from 'dotenv';
-import connectDB from './config/db.config';
+import connectDB from './config/db.config.js';
 
 dotenv.config();
 
 connectDB();
 
-const PORT = process.env.PORT || 2706;
+const PORT = process.env.PORT || 1307;
 
 app.get('/', (req, res) => {res.send('Backend is running');});
 

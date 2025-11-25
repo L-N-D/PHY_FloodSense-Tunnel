@@ -1,27 +1,50 @@
+import {loginService, logoutService} from './auth.service.js';
 
-import loginService from './auth.service';
+export const loginController = async (req, res) => {
 
-const authLogin = (req, res) => {
+    const {username, password} = req.body;
 
-    const {username, password} = req.body();
-
-    const user = loginService(username, password);
-
-    if (user === null){
-        return res.status(404).json('Account does not exist');
+    if (!username || !password){
+        return res.status(401).json('Username or Password missed');
     }
 
-    if (user === false){
-        return res.status(500).json('Incorrect Password');
+    try {
+
+        const {token, user} = await loginService(username, password);
+
+        res.cookies('accessToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+
+        res.status(200).json({message: 'Login successful'});
+    }catch(err){
+        console.log(err);
+        res.status(400).json({error: err.message});
     }
 
-    // const payload = {
-    //     id: user._id,
-    //     username: user.username
-    // }
+};
 
-    res.cookie('auth_token')
+export const logoutController = async (req, res) => {
 
+    try {
 
+        const username = req.user.username;
 
+        await logoutService(username);
+
+        res.clearCookie('accessToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+
+        res.status(200).json({ message: 'Logout successful' });
+
+    }catch(err){
+        console.log(err);
+        res.status(400).json({ error: err.message });
+    }
+    
 }
