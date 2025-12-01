@@ -27,7 +27,7 @@ export const creatRefreshToken = async (payload) => {
     const refreshToken = await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('5m')
+        .setExpirationTime('7d')
         .sign(refreshSecret);
 
     return refreshToken;
@@ -52,7 +52,6 @@ export const verifyAccessToken = async (token) => {
 
 export const verifyRefreshToken = async (token) => {
 
-    console.log(token);
     const refreshSecret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET);
 
     try {
@@ -64,34 +63,31 @@ export const verifyRefreshToken = async (token) => {
             return null;
         }
 
-        // console.log(`payload: ${payload.username}`);
-
         // check is valid user and still be allowed access server
         try {
             const username = payload.username;
             const user = await User.findOne({ username: username });
             if (!user) {
+                console.log('User not found');
                 return null;
             }
 
             // get refresh token in db
             if (!user.tokens || !user.tokens.length) {
-                console.log('No refresh token in db');
+                console.log('[Service] | jwt.service.js / verifyRefreshToken: Token not found');
                 return null;
             }
 
             const savedRefreshToken = user.tokens.find(t => t.type === 'refresh');
             if (!savedRefreshToken) {
-                console.log('No refresh token in db');
+                console.log('[Service] | jwt.service.js / verifyRefreshToken: No refresh token in db');
                 return null;
             }
 
             if (savedRefreshToken.token !== token) {
-                console.log('Token not match');
+                console.log('[Service] | jwt.service.js / verifyRefreshToken: Token not match');
                 return null;
             }
-
-            console.log(payload.username);
 
             return payload;
 
@@ -107,27 +103,27 @@ export const verifyRefreshToken = async (token) => {
 
 }
 
-export const refreshTokenService = async ({payload}) => {
+export const refreshTokenService = async (payload) => {
 
     if (!payload){
-        console.log(payload);
-        console.log('refreshTokenService: no payload');
+        console.log('[Service] | jwt.service.js / refreshTokenService: no payload');
     }
 
-    const accessToken = creatAccessToken(payload);
-    const refreshToken = creatRefreshToken(payload);
+    const accessToken = await creatAccessToken(payload);
+    const refreshToken = await creatRefreshToken(payload);
 
     const userName = payload.username;
-    // console.log(userName);
 
-    const user = User.findOne({ username: userName });
+    const user = await User.findOne({ username: userName });
     if (!user) {
+        console.log('[Service] | jwt.service.js / refreshTokenService: User not found');
         return null;
     }
 
     // get refresh token in db
-    const savedRefreshToken = user.tokens.find(t => t.type === 'refresh');
+    const savedRefreshToken = await user.tokens.find(t => t.type === 'refresh');
     if (!savedRefreshToken) {
+        console.log('[Service] | jwt.service.js / refreshTokenService: No token found');
         return null;
     }
 

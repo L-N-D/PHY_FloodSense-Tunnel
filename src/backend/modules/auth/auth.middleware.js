@@ -6,9 +6,9 @@ export const authVerifyToken = async (req, res, next) => {
 
         const token = req.header('authorization').replace('Bearer ', '');
 
-        const {payload} = await verifyAccessToken(token);
+        const payload = await verifyAccessToken(token);
 
-        req.username = payload;
+        req.username = payload.username;
         next();
 
     }

@@ -6,7 +6,7 @@ export const refreshTokenController = async (req, res) => {
         username: req.username,
     };
 
-    const { accessToken, refreshToken, user } = await refreshTokenService({payload});
+    const { accessToken, refreshToken, user } = await refreshTokenService(payload);
 
     if (!accessToken || !refreshToken || !user) {
         res.status(401).json({ message: 'Refresh Token fail' });

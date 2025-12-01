@@ -52,8 +52,11 @@ export const loginService = async (username, password) => {
             const accessToken = await creatAccessToken(payload);
             const refreshToken = await creatRefreshToken(payload);
 
-            console.log(`auth.service | accessToken ${accessToken}`);
-            console.log(`auth.service | refreshToken ${refreshToken}`);
+            const existToken = user.tokens.find(t => t.type === 'refresh');
+            if (existToken){
+                await User.updateOne({ username: username },
+                    { $pull: { tokens: { type: 'refresh' } } });
+            }
 
             // Save refresh token into db
             user.tokens.push(
@@ -71,7 +74,7 @@ export const loginService = async (username, password) => {
             throw new Error('Incorrect password');
         }
     } catch (err) {
-        console.log(err);
+        console.log('[Service] | loginService.js ', err);
         return null;
     }
 
@@ -79,8 +82,10 @@ export const loginService = async (username, password) => {
 
 export const logoutService = async (username) => {
 
-    await User.updateOne({ username: username },
+    const result = await User.updateOne({ username: username },
         { $pull: { tokens: { type: 'refresh' } } }
     );
+
+    // console.log(result);
 
 }
