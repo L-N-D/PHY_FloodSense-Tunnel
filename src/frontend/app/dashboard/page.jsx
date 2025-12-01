@@ -95,7 +95,7 @@ export default function Dashboard() {
                             <p className="text-8xl font-black text-red-400 drop-shadow-[0_0_25px_rgba(248,113,113,0.6)]">
                                 {sensorData.water_level?.value?.toFixed(1) || '0'}
                             </p>
-                            <span className="text-5xl font-bold text-red-400/70">%</span>
+                            <span className="text-5xl font-bold text-red-400/70">cm</span>
                         </div>
                         <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-red-600 to-red-400 shadow-lg shadow-red-500/50"></div>
                     </div>

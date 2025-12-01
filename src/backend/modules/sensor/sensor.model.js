@@ -33,6 +33,11 @@ const sensorSchema = new mongoose.Schema({
 // Index for faster queries
 sensorSchema.index({ type: 1, timestamp: -1 });
 
+// Debug hook to confirm save
+sensorSchema.post('save', function (doc) {
+    console.log('✅ [MONGOOSE] Document saved to DB:', doc._id);
+});
+
 const Sensor = mongoose.model('Sensor', sensorSchema);
 
 export default Sensor;

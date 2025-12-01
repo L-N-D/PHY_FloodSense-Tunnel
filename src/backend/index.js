@@ -2,10 +2,12 @@ import app from './app.js'
 import dotenv from 'dotenv';
 import connectDB from './config/db.config.js';
 import { seedSensorData, seedDevices } from './seed.js';
+import { connectMQTT } from './services/mqtt.service.js';
 
 dotenv.config();
 
 await connectDB();
+connectMQTT();
 
 // Seed initial data (optional - won't throw if already exists)
 try {
