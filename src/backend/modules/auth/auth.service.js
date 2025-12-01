@@ -1,7 +1,8 @@
 import User from '../user/user.model.js'
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import { SignJWT } from 'jose';
+import { creatAccessToken, creatRefreshToken } from '../../services/jwt.service.js';
+
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ export const registerService = async (username, password) => {
 export const loginService = async (username, password) => {
 
     try {
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ username: username });
 
         if (!user) {
             throw new Error('User not exist');
@@ -44,22 +45,15 @@ export const loginService = async (username, password) => {
 
         if (isValidPassword) {
 
-            const accessSecret = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET);
-            const refreshSecret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET);
+            // create access token and refresh token
+            const payload = {
+                username: username
+            }
+            const accessToken = await creatAccessToken(payload);
+            const refreshToken = await creatRefreshToken(payload);
 
-            // Access token generate
-            const accessToken = await new SignJWT({ username })
-                .setProtectedHeader({ alg: 'HS256' })
-                .setIssuedAt()
-                .setExpirationTime('5m')
-                .sign(accessSecret);
-
-            // Refresh token generate
-            const refreshToken = await new SignJWT({ username })
-                .setProtectedHeader({ alg: 'HS256' })
-                .setIssuedAt()
-                .setExpirationTime('5m')
-                .sign(refreshSecret);
+            console.log(`auth.service | accessToken ${accessToken}`);
+            console.log(`auth.service | refreshToken ${refreshToken}`);
 
             // Save refresh token into db
             user.tokens.push(
@@ -71,7 +65,7 @@ export const loginService = async (username, password) => {
             )
             await user.save();
 
-            return { accessToken, user };
+            return { accessToken, refreshToken, user };
 
         } else {
             throw new Error('Incorrect password');

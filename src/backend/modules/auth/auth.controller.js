@@ -10,22 +10,25 @@ export const loginController = async (req, res) => {
 
     try {
 
-        const {accessToken, user} = await loginService(username, password);
+        const {accessToken, refreshToken, user} = await loginService(username, password);
 
         if (!accessToken || !user) {
+            console.log(accessToken);
             return res.status(400).json({ message: 'Login failed' });
         }
 
 
-        res.cookie('accessToken', accessToken, {
+        res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax'
         });
 
+        res.setHeader('authorization',  `Bearer ${accessToken}`);
+
         res.status(200).json({message: 'Login successful'});
     }catch(err){
-        console.log(err);
+        console.log(`[Controller] | auth ${err.message}`);
         res.status(400).json({error: err.message});
     }
 
@@ -48,7 +51,7 @@ export const registerController = async (req, res) => {
 
         res.status(200).json({ message: 'Register successful' });
     }catch(err){
-        console.error(err);
+        console.error(err.message);
         res.status(400).json({ error: err.message });
     }
     
@@ -59,11 +62,11 @@ export const logoutController = async (req, res) => {
 
     try {
 
-        const username = req.user.username;
+        const username = req.username;
 
         await logoutService(username);
 
-        res.clearCookie('accessToken', {
+        res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax'
