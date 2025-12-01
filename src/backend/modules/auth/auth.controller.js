@@ -43,10 +43,14 @@ export const registerController = async (req, res) => {
             return res.status(401).json('Username or Password missed');
         }
 
-        const user = await registerService(username, password);
+        const result = await registerService(username, password);
 
-        if (!user) {
+        if (!result) {
             return res.status(400).json({ message: 'Register fail' });
+        }
+
+        if (result.success === false){
+            return res.status(400).json({message: 'User already exist'});
         }
 
         res.status(200).json({ message: 'Register successful' });

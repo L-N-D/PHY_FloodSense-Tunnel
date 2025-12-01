@@ -23,7 +23,7 @@ export const registerService = async (username, password) => {
 
         await newUser.save();
 
-        return newUser;
+        return { success: false, newUser};
     } catch (err) {
         console.error(err);
         return { success: false, message: err.message };
