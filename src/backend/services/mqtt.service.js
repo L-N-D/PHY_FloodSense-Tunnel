@@ -37,6 +37,7 @@ export const connectMQTT = () => {
         // Check if topic matches pattern "sensors/..."
         if (topic.startsWith('sensors/')) {
             try {
+                console.log(topic);
                 const payload = message.toString();
                 const data = JSON.parse(payload);
 
