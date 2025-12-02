@@ -6,6 +6,7 @@ const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtts://32eacacd4099498e
 // Subscribe to all sub-topics under "sensors/"
 const SENSOR_TOPIC = 'sensors/+';
 
+
 let client;
 
 export const connectMQTT = () => {
