@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>FCM Token Test</title>
+
+    <!-- Firebase compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+  </head>
+  <body>
+    <h1>FCM Token Test</h1>
+    <p>Token:</p>
+    <pre id="token">Đang lấy token...</pre>
+
+    <script>
+      // TODO: THAY BẰNG CONFIG CỦA BẠN
+
+
+	const firebaseConfig = {
+  		apiKey: "AIzaSyC5eewUE6fIsGK8eJ8oTFilLnWvZ6JnXe0",
+  		authDomain: "basement-monitor-87754.firebaseapp.com",
+  		projectId: "basement-monitor-87754",
+  		storageBucket: "basement-monitor-87754.firebasestorage.app",
+ 		messagingSenderId: "814151626842",
+  		appId: "1:814151626842:web:36366a28925ec5b4ac6863",
+  		measurementId: "G-3D31XKP6N2"
+		};
+
+
+
+      firebase.initializeApp(firebaseConfig);
+      const messaging = firebase.messaging();
+
+      async function getTokenFCM() {
+        try {
+          const currentToken = await messaging.getToken({
+            vapidKey: "",
+          });
+
+          if (currentToken) {
+            console.log("FCM Token:", currentToken);
+            document.getElementById("token").textContent = currentToken;
+          } else {
+            console.log("No registration token available.");
+            document.getElementById("token").textContent =
+              "Không lấy được token (no registration token).";
+          }
+        } catch (err) {
+          console.error("Error retrieving token ", err);
+          document.getElementById("token").textContent =
+            "Error: " + err.message;
+        }
+      }
+
+      // Xin quyền hiển thị notification
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          getTokenFCM();
+        } else {
+          document.getElementById("token").textContent =
+            "Notification permission denied.";
+        }
+      });
+    </script>
+  </body>
+</html>
