@@ -1,18 +1,24 @@
 'use client';
+import { createContext, useContext, useState } from "react";
 
-import { useState } from "react";
+const AuthTokenContext = createContext(null);
 
+export function AuthTokenProvider({ children }) {
+    const [accessToken, setAccessToken] = useState(null);
+    const [user, setUser] = useState(null);
 
-export function authToken () {
-    const [accesToken, setAccessToken] = useState(null);
+    const saveToken = (token) => setAccessToken(token);
+    const saveUser = (info) => setUser(info);
+    const clearUser = () => setUser(null);
+    const clearToken = () => setAccessToken(null);
 
-    const saveToken = (token) => {
-        setAccessToken(token);
-    }
+    return (
+        <AuthTokenContext.Provider value={{ accessToken, saveToken, clearToken, saveUser, clearUser, user }}>
+            {children}
+        </AuthTokenContext.Provider>
+    );
+}
 
-    const clearToken = () => {
-        setAccessToken(null);
-    }
-
-    return {accesToken, saveToken, clearToken};
+export function useAuthToken() {
+    return useContext(AuthTokenContext);
 }

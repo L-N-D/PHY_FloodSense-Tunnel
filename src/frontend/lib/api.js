@@ -1,73 +1,81 @@
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-let queue = []
 let isRefreshing = false;
+let queue = [];
 
-function waitforRefresh () {
-    return new Promise((resolve) => queue.push(resolve));
+function waitForRefresh() {
+  return new Promise((resolve) => queue.push(resolve));
 }
 
-async function refreshToken () {
-    const res = await fetch(baseURL + 'api/refresh', {
-        method: 'POST',
-        credentials: 'include'
+async function refreshToken() {
+  const res = await fetch(baseURL + "api/refresh", {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Refresh token failed");
+  }
+
+  const json = await res.json();
+
+  // your API returns: dataRefresh.accessToken ?
+  const newAccessToken = json.accessToken;
+
+  return newAccessToken;
+}
+
+export default async function api(url, options = {}) {
+
+  let accessToken = options.accessToken || ""; // from localStorage or auth state
+
+  async function doRequest(token) {
+    const res = await fetch(baseURL + url, {
+      method: options.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { authorization: `Bearer ${token}` }),
+      },
+      credentials: "include",
+      body: options.body || null,
     });
 
-    if (!res.ok){
-        throw new Error('Refresh Token failed');
+    const json = await res.json();
+    return { status: res.status, data: json };
+  }
+
+  // First request attempt
+  let result = await doRequest(accessToken);
+
+  // If access token expired
+  if (result.data?.message === "Token invalid or expired") {
+
+    // If already refreshing → wait
+    if (isRefreshing) {
+      const newToken = await waitForRefresh();
+      return (await doRequest(newToken)).data;
     }
 
-    const data = await res.json();
+    // Start refreshing here
+    isRefreshing = true;
 
-    return res.headers.authorization.replace('Bearer ', '');
+    try {
+      const newToken = await refreshToken();
 
-}
+      // Resolve all queued requests
+      queue.forEach((resolve) => resolve(newToken));
+      queue = [];
+      isRefreshing = false;
 
-export default async function call(url, options = {}) {
+      // Retry original request with new token
+      return (await doRequest(newToken)).data;
 
-
-    const res = await fetch(apiURL + url, {
-        method: options.method || 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'authorization': `Bearer ${options.accesToken}` || ''
-        },
-        credentials: options.credentials,
-        body: options.body || null
-    })
-
-    const data = await res.json();
-
-    if (data.message === 'Token invalid or expired') {
-        const refresh = await fetch(apiURL + 'api/refresh', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        })
-
-        if (refresh.status == 200) {
-            const dataRefresh = await refresh.json();
-
-            const newAccessToken = dataRefresh.accesToken;
-
-            res = await fetch(apiURL + url, {
-                method: options.method || "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": `Bearer ${newAccessToken}`
-                },
-                credentials: "include",
-                body: options.body || null
-            });
-
-            data = await res.json();
-
-        }
-
+    } catch (err) {
+      isRefreshing = false;
+      queue = [];
+      throw err;
     }
+  }
 
-    return data;
-
+  return result.data;
 }

@@ -1,9 +1,15 @@
 'use client';
+import { useAuthToken } from "@/hook/useToken.js";
+import { useAuth } from "@/hook/useAuth.js";
 
+const NavBar = () => {
 
-const NavBar = ({ isAuth }) => {
+    const { user } = useAuthToken();
+    const {logout} = useAuth();
+    // alert(user);
 
     const handelLogout = () => {
+        logout();
     };
 
     return (
@@ -12,7 +18,7 @@ const NavBar = ({ isAuth }) => {
             <p className="text-white">Sentinal</p>
 
             <div className="fixed right-[60px] h-[40px] w-[200px] flex justify-around items-center">
-                {!isAuth ? (
+                {!user ? (
                     <div className="flex gap-2">
                         <a
                             href="/auth/login"
@@ -30,7 +36,7 @@ const NavBar = ({ isAuth }) => {
                         </a>
                     </div>
                 ) : (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" onClick={handelLogout}>
                         <button type="button" className="h-[40px] w-[90px] border border-white rounded-[8px] bg-[#007bff] text-[16px] font-[500]
                          flex justify-center items-center whitespace-nowrap
                          hover:bg-[#e6f0ff] hover:text-[#333446]">
