@@ -1,5 +1,5 @@
 import './globals.css';
-import { AuthTokenProvider } from '@/hook/useToken.js';
+import { AuthContextProvider } from '@/lib/context/authContext.js';
 
 export const metadata = {
   title: 'Flood Tunnel',
@@ -23,9 +23,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <AuthTokenProvider>
+        <AuthContextProvider>
           {children}
-        </AuthTokenProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

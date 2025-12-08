@@ -1,3 +1,4 @@
+'use client';
 import SideBar from "@/components/layout/SideBar";
 import NavBar from "@/components/layout/NavBar";
 

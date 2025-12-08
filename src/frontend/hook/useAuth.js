@@ -1,18 +1,18 @@
 'use client';
 import { useState } from "react";
 import api from "../lib/api.js";
-import { useAuthToken } from "./useToken.js";
+import { useAuthContext } from "@/lib/context/authContext.js";
 
 export function useAuth() {
 
-    const { accessToken, saveToken, clearToken, saveUser, clearUser } = useAuthToken();
+    const {saveUser, clearUser} = useAuthContext();
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     // -------- REGISTER --------
-    const register = async (email, username, password, confirmPassword) => {
+    const register = async (email, username, password) => {
         setLoading(true);
         setError('');
 
@@ -52,13 +52,7 @@ export function useAuth() {
                 return null;
             }
 
-            if (res.accessToken) {
-                saveToken(res.accessToken);
-            }
 
-            // alert(res.message);
-
-            // setUser(res.message || null);
             saveUser(res.message || null);
 
             return res;
