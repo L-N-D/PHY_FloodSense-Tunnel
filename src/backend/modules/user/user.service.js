@@ -8,6 +8,10 @@ export const getUserService = async (username) => {
         return null;
     }
 
-    return user;
+    const result = {
+        username: user.username
+    }
+
+    return result;
 
 }

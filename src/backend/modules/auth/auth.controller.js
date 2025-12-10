@@ -24,7 +24,13 @@ export const loginController = async (req, res) => {
             sameSite: 'lax'
         });
 
-        res.setHeader('authorization',  `Bearer ${accessToken}`);
+        res.cookie('authorization', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+
+        // res.setHeader('authorization',  `Bearer ${accessToken}`);
 
         res.status(200).json({message: 'Login successful'});
     }catch(err){
@@ -71,6 +77,11 @@ export const logoutController = async (req, res) => {
         await logoutService(username);
 
         res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        res.clearCookie('authorization', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax'

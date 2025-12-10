@@ -4,7 +4,7 @@ export const authAccessToken = async (req, res, next) => {
 
     try {
 
-        const token = req.header('authorization').replace('Bearer ', '');
+        const token = req.cookies.authorization;
 
         const payload = await verifyAccessToken(token);
 
@@ -24,7 +24,7 @@ export const authRefreshToken = async (req, res, next) => {
         const token = req.cookies.refreshToken;
 
         if (!token){
-            return res.status(401).json('Access deinied: no refresh token provided');
+            return res.status(401).json('Access denied: no refresh token provided');
         }
 
         const payload = await verifyRefreshToken(token);
