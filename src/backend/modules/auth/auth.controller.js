@@ -20,14 +20,18 @@ export const loginController = async (req, res) => {
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            // secure: process.env.NODE_ENV === 'production',
+            // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' 
+            secure: true,
+            sameSite: 'none'
         });
 
         res.cookie('authorization', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            // secure: process.env.NODE_ENV === 'production',
+            // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+            secure: true,
+            sameSite: 'none'
         });
 
         // res.setHeader('authorization',  `Bearer ${accessToken}`);
