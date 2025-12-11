@@ -10,17 +10,14 @@ export default function HomeLayout({ children }) {
         <NavBar />
       </div>
 
-      <div className="flex">
-
-        <div className="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-64 z-40">
-          <SideBar />
-        </div>
-
-        <main className="mt-[60px] ml-[124px] min-w-screen flex-1 w-full justify-center items-center">
-          {children}
-        </main>
-
+      <div className="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-64 z-40">
+        <SideBar />
       </div>
+
+      <main className=" pl-60 min-w-screen flex-1 w-full justify-center items-center">
+        {children}
+      </main>
+
     </div>
   );
 }

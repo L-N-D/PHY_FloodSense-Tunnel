@@ -7,11 +7,10 @@ export function useAuth() {
 
     const {saveUser, clearUser} = useAuthContext();
 
-    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
-    // -------- REGISTER --------
     const register = async (email, username, password) => {
         setLoading(true);
         setError('');
@@ -23,11 +22,15 @@ export function useAuth() {
                 credentials: "include"
             });
 
-            if (res.error) setError(res.error);
+            if (!res.ok){
+                setError(res.data.message);
+                return null;
+            }
+            setError('');
             return res;
 
         } catch (e) {
-            setError("Register failed");
+            setError(`Register failed: ${res.data.message}`);
             return null;
 
         } finally {
@@ -69,22 +72,24 @@ export function useAuth() {
 
     const logout = async () => {
         // setUser(null);
+        setLoading(true);
         clearUser();
 
-        await api("/api/auth/logout", {
+        const res = await api("/api/auth/logout", {
             method: "POST",
             credentials: "include"
         });
-        clearToken();
+        setLoading(false);
+        return res;
     };
 
 
     return {
-        user,
         loading,
         error,
-        login,
+        success,
         register,
+        login,
         logout
     };
 }

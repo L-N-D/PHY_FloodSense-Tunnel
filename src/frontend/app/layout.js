@@ -24,7 +24,11 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthContextProvider>
-          {children}
+          <div className="flex">
+            <main className="min-w-screen flex flex-1">
+              {children}
+            </main>
+          </div>
         </AuthContextProvider>
       </body>
     </html>

@@ -1,7 +1,11 @@
 'use client';
 import { useState } from "react";
+import { useAuth } from "@/hook/useAuth";
 
 export default function RegisterPage() {
+    const { register, loading, error } = useAuth();
+    const [success, setSuccess] = useState(false);
+    const [localError, setLocalError] = useState('');
 
     const [form, setForm] = useState({
         email: '',
@@ -10,7 +14,6 @@ export default function RegisterPage() {
         confirmPassword: ''
     });
 
-    const [error, setError] = useState('');
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -18,36 +21,48 @@ export default function RegisterPage() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!form.email || !form.username || !form.password || !form.confirmPassword) {
-            return setError("Please fill in all required fields.");
+            setLocalError("Please fill in all required fields.");
+            return;
         }
-
         if (form.password.length < 8) {
-            return setError("Password must be at least 8 characters.");
+            setLocalError("Password must be at least 8 characters.");
+            return;
         }
-
         if (form.password !== form.confirmPassword) {
-            return setError("Password and confirmation do not match.");
+            setLocalError("Password and confirmation do not match.");
+            return;
         }
 
-        setError("");
-        console.log("Register data:", form);
+        setLocalError('');
+        setSuccess(false);
 
-        // TODO: Call your register API here
+        const res = await register(form.email, form.username, form.password);
+
+        if (res) {
+            setSuccess(true);
+            setForm({ email: '', username: '', password: '', confirmPassword: '' });
+        }
     };
 
     return (
-        <form 
+        <form
             className="flex flex-col gap-3 w-[80%] mx-auto mt-4 text-white"
             onSubmit={handleSubmit}
         >
             <h2 className="text-3xl font-bold text-center mb-2">Register</h2>
 
-            {error && (
-                <p className="text-red-400 text-center text-sm">{error}</p>
+            {localError && <p className="text-red-400 text-center text-sm">{localError}</p>}
+
+            {error && <p className="text-red-400 text-center text-sm">{error}</p>}
+
+            {success && (
+                <p className="text-green-400 text-center text-sm">
+                    Registration successful! You can now <a href="/auth/login" className="underline">login</a>.
+                </p>
             )}
 
             <label htmlFor="email" className="font-semibold">Email:</label>
@@ -108,11 +123,23 @@ export default function RegisterPage() {
                 </span>
             </div>
 
+            {/* Submit button */}
             <button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 transition p-2 rounded-md font-semibold mt-4"
+                disabled={loading}
+                className={`bg-green-600 hover:bg-green-700 transition p-2 rounded-md font-semibold mt-4 flex justify-center items-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-                Register
+                {loading ? (
+                    <>
+                        <svg className="animate-spin h-5 w-5 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        Registering...
+                    </>
+                ) : (
+                    'Register'
+                )}
             </button>
 
             <p className="text-center text-sm mt-2">

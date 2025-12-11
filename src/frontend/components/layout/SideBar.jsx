@@ -55,21 +55,21 @@ const SideBar = () => {
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/devices" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/devices" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-hard-drive"></i>
                     Devices
                 </a>
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/profile" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/profile" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-address-card"></i>
                     Profile
                 </a>
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/abouts" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/abouts" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-circle-info"></i>
                     Abouts
                 </a>
