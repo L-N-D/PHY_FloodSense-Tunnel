@@ -10,6 +10,6 @@ export const getUserController = async (req, res) => {
         return res.status(404).json({message: 'User not found'});
     }
 
-    return res.status(200).json(result);
+    res.status(200).json(result);
 
 }

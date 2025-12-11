@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use('/auth', authRouter);
 router.use('/user', authAccessToken, userRouter);
-router.use('/refresh', authRefreshToken, refreshTokenController);
+router.get('/refresh', authRefreshToken, refreshTokenController);
 
 const commonRoute = router;
 export default commonRoute;
