@@ -86,6 +86,4 @@ export const logoutService = async (username) => {
         { $pull: { tokens: { type: 'refresh' } } }
     );
 
-    // console.log(result);
-
 }
