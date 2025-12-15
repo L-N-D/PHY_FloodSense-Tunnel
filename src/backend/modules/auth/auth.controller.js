@@ -32,7 +32,12 @@ export const loginController = async (req, res) => {
 
         // res.setHeader('authorization',  `Bearer ${accessToken}`);
 
-        res.status(200).json({message: 'Login successful'});
+        res.status(200).json({
+            message: 'Login successful',
+            username: user.username,
+            createdAt: user.createdAt,
+            email: user.email
+        });
     }catch(err){
         console.log(`[Controller] | auth ${err.message}`);
         res.status(400).json({error: err.message});
@@ -43,13 +48,13 @@ export const loginController = async (req, res) => {
 export const registerController = async (req, res) => {
 
     try {
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
 
         if (!username || !password){
             return res.status(401).json('Username or Password missed');
         }
 
-        const result = await registerService(username, password);
+        const result = await registerService(username, password, email);
 
         if (!result) {
             return res.status(400).json({ message: 'Register fail' });

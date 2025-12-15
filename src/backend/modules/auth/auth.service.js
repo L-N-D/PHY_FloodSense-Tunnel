@@ -8,7 +8,7 @@ dotenv.config();
 
 const saltRound = 10;
 
-export const registerService = async (username, password) => {
+export const registerService = async (username, password, email) => {
 
     try {
 
@@ -19,11 +19,11 @@ export const registerService = async (username, password) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, saltRound);
-        const newUser = new User({ username: username, password: hashedPassword });
+        const newUser = new User({ username: username, password: hashedPassword, email: email });
 
         await newUser.save();
 
-        return { success: false, newUser};
+        return { success: true, newUser};
     } catch (err) {
         console.error(err);
         return { success: false, message: err.message };

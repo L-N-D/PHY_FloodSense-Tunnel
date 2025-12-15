@@ -9,7 +9,9 @@ export const getUserService = async (username) => {
     }
 
     const result = {
-        username: user.username
+        username: user.username,
+        email: user.email,
+        createdAt: user.createdAt
     }
 
     return result;
