@@ -1,72 +1,114 @@
-// mqtt/mqtt.client.js
 import mqtt from 'mqtt';
-import dotenv from 'dotenv';
 import { handleAlert } from '../services/notification.service.js';
-
-dotenv.config();
+import SensorLog from '../modules/sensors/sensors.model.js';
+import AlarmLog from '../modules/alarm/alarm.model.js';
 
 const MQTT_HOST = process.env.MQTT_HOST;
-const MQTT_PORT = process.env.MQTT_PORT || 1883;
+const MQTT_PORT = process.env.MQTT_PORT;
 const MQTT_USERNAME = process.env.MQTT_USERNAME;
 const MQTT_PASSWORD = process.env.MQTT_PASSWORD;
 
-const clientId = `backend_${Math.random().toString(16).slice(2)}`;
+const ALARM_TOPIC = 'esp32/data/alarm';
 
-const connectUrl = `mqtt://${MQTT_HOST}:${MQTT_PORT}`;
+const SENSOR_TOPICS = [
+  'esp32/data/temperature',
+  'esp32/data/humidity',
+  'esp32/data/water',
+  'esp32/data/smoke',
+  'esp32/data/rain',
+  'esp32/data/rain_raw',
+  'esp32/data/alarm_state',
+  'esp32/data/gate',
+  'esp32/data/pump',
+  'esp32/data/fan',
+];
 
-const client = mqtt.connect(connectUrl, {
-  clientId,
+const ACK_TOPICS = [
+  'esp32/ack/gate',
+  'esp32/ack/pump',
+  'esp32/ack/fan',
+  'esp32/ack/buzzer',
+];
+
+const client = mqtt.connect(`mqtt://${MQTT_HOST}:${MQTT_PORT}`, {
   username: MQTT_USERNAME,
   password: MQTT_PASSWORD,
-  clean: true,
   reconnectPeriod: 2000,
 });
 
-const ALARM_TOPIC = 'esp32/data/alarm';
-
 client.on('connect', () => {
-  console.log('MQTT connected to broker');
+  console.log('Connected to MQTT broker');
 
-  client.subscribe(ALARM_TOPIC, (err) => {
-    if (err) {
-      console.error('Error subscribing to alarm topic:', err);
-    } else {
-      console.log(`Subscribed to ${ALARM_TOPIC}`);
-    }
+  client.subscribe([ALARM_TOPIC, ...SENSOR_TOPICS, ...ACK_TOPICS], (err) => {
+    if (err) console.error('MQTT subscribe error:', err);
+    else console.log('Subscribed ALARM + SENSOR + ACK topics OK');
   });
 });
 
 client.on('message', async (topic, message) => {
-  try {
-    const payload = message.toString();
+  const payloadStr = message.toString();
 
+  try {
+    // 1) ACK: log + (tuỳ) lưu DB
+    if (ACK_TOPICS.includes(topic)) {
+      console.log(`[ACK] ${topic}: ${payloadStr}`);
+      SensorLog.create({ topic, value: payloadStr, category: 'ack' }).catch(console.error);
+      return;
+    }
+
+    // 2) SENSOR DATA: lưu log
+    if (SENSOR_TOPICS.includes(topic)) {
+      await SensorLog.create({ topic, value: payloadStr, category: 'sensor' }).catch(console.error);
+      return;
+    }
+
+    // 3) ALARM EVENT: parse JSON first, fallback string
     if (topic === ALARM_TOPIC) {
-      if (payload === 'fire' || payload === 'flood') {
-        const alert = {
-          type: payload, // 'fire' | 'flood'
+      let alert = null;
+
+      // JSON event
+      try {
+        const obj = JSON.parse(payloadStr);
+        const ts = Number(obj.timestamp);
+        if (obj && (obj.type === 'fire' || obj.type === 'flood')) {
+          alert = {
+            type: obj.type,
+            severity: obj.severity || 'HIGH',
+            timestamp: ts && ts > 1e12 ? ts : Date.now(),
+            message: obj.message || '',
+          };
+        }
+      } catch (_) {}
+
+      // legacy string fallback
+      if (!alert && (payloadStr === 'fire' || payloadStr === 'flood')) {
+        alert = {
+          type: payloadStr,
           severity: 'HIGH',
           timestamp: Date.now(),
-          message:
-            payload === 'fire'
-              ? 'ESP32 phát hiện nguy cơ CHÁY trong hầm xe.'
-              : 'ESP32 phát hiện nguy cơ NGẬP nước trong hầm xe.',
+          message: payloadStr === 'fire'
+            ? 'ESP32 phát hiện nguy cơ CHÁY trong hầm xe.'
+            : 'ESP32 phát hiện nguy cơ NGẬP nước trong hầm xe.',
         };
-
-        console.log('Received alarm from ESP32:', alert);
-
-        await handleAlert(alert);
-      } else {
-        // 'safe' hoặc trạng thái khác -> chỉ log
-        console.log('Alarm status:', payload);
       }
+
+      if (!alert) {
+        console.log(`[ALARM] ignore payload: ${payloadStr}`);
+        return;
+      }
+
+      console.log('Received ALARM EVENT:', alert);
+
+      // lưu alarm history
+      await AlarmLog.create(alert);
+
+      // gửi theo ALERT_MODE
+      handleAlert(alert).catch(console.error);
+
     }
   } catch (err) {
     console.error('Error handling MQTT message:', err);
   }
-});
-
-client.on('error', (err) => {
-  console.error('MQTT error:', err);
 });
 
 export default client;

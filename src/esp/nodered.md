@@ -15,8 +15,10 @@
         "qos": "0",
         "datatype": "auto",
         "broker": "mqtt_config",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
-        "x": 160,
+        "x": 150,
         "y": 60,
         "wires": [
             [
@@ -62,6 +64,8 @@
         "qos": "0",
         "datatype": "auto",
         "broker": "mqtt_config",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
         "x": 160,
         "y": 120,
@@ -106,6 +110,8 @@
         "qos": "0",
         "datatype": "auto",
         "broker": "mqtt_config",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
         "x": 160,
         "y": 180,
@@ -175,6 +181,8 @@
         "qos": "0",
         "datatype": "auto",
         "broker": "mqtt_config",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
         "x": 160,
         "y": 300,
@@ -219,6 +227,8 @@
         "qos": "0",
         "datatype": "auto",
         "broker": "mqtt_config",
+        "nl": false,
+        "rap": false,
         "inputs": 0,
         "x": 150,
         "y": 360,
@@ -952,7 +962,7 @@
         "hidden": false
     },
     {
-        "id": "4b5c637c743a139b",
+        "id": "44563797418d2186",
         "type": "global-config",
         "env": [],
         "modules": {

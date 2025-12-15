@@ -1,61 +1,47 @@
-// services/notification.service.js
-import admin from 'firebase-admin';
-import firebaseApp from '../config/firebase.config.js';
+
 import { sendAlertEmail } from './email.service.js';
 import User from '../modules/user/user.model.js';
+import admin from 'firebase-admin';
+import { sendPushsafer } from './pushsafer.service.js';
+import firebaseApp from '../config/firebase.config.js';
 
-/**
- * Gửi push notification qua FCM tới 1 thiết bị
- */
-export const sendPushNotification = async (fcmToken, alert) => {
-  const title =
-    alert.type === 'fire'
-      ? 'Cảnh báo cháy trong hầm xe'
-      : 'Cảnh báo ngập nước trong hầm xe';
-
-  const body = alert.message;
-
+export const sendPushNotification = async (fcmToken, alert, userId) => {
   const message = {
     token: fcmToken,
     notification: {
-      title,
-      body,
+      title: `ALERT: ${alert.type.toUpperCase()} (${alert.severity})`,
+      body: alert.message || 'Basement alert',
     },
     data: {
       type: alert.type,
       severity: alert.severity,
       timestamp: String(alert.timestamp),
-    },
+    }
   };
 
-  await admin.messaging(firebaseApp).send(message);
+  try {
+    await admin.messaging(firebaseApp).send(message);
+    console.log(`Push sent to user ${userId}`);
+  } catch (error) {
+    console.error('Error sending push notification:', error);
+    // giữ logic xoá token lỗi như bạn đang có
+    if (error.code === 'messaging/registration-token-not-registered' ||
+        error.code === 'messaging/invalid-registration-token') {
+      await User.findByIdAndUpdate(userId, { fcmToken: null });
+      console.log(`Removed invalid FCM token for user ${userId}`);
+    }
+  }
 };
 
-/**
- * Nhận alert từ MQTT, gửi cho tất cả user:
- *  - Push notification nếu có fcmToken
- *  - Email nếu có email
- */
 export const handleAlert = async (alert) => {
   const users = await User.find({});
-
   for (const user of users) {
-    // 1. Push notification
-    if (user.fcmToken) {
-      try {
-        await sendPushNotification(user.fcmToken, alert);
-      } catch (err) {
-        console.error('Error sending push notification:', err);
-      }
-    }
-
-    // 2. Email
-    if (user.email) {
-      try {
-        await sendAlertEmail(user.email, alert);
-      } catch (err) {
-        console.error('Error sending alert email:', err);
-      }
-    }
+    //if (ALERT_MODE === 'email') {
+      if (user.email) await sendAlertEmail(user.email, alert);
+    //} else if (ALERT_MODE === 'pushsafer') {
+      await sendPushsafer(alert);
+    //} else {
+    //  console.warn('[Notification] Unknown ALERT_MODE:', ALERT_MODE);
+    //}
   }
 };
