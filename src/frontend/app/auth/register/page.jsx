@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/hook/useAuth";
 
 export default function RegisterPage() {
-    const { register, loading, error } = useAuth();
-    const [success, setSuccess] = useState(false);
+    const { register, loading, error, success } = useAuth();
     const [localError, setLocalError] = useState('');
 
     const [form, setForm] = useState({
@@ -38,12 +37,10 @@ export default function RegisterPage() {
         }
 
         setLocalError('');
-        setSuccess(false);
 
         const res = await register(form.email, form.username, form.password);
 
         if (res) {
-            setSuccess(true);
             setForm({ email: '', username: '', password: '', confirmPassword: '' });
         }
     };
@@ -60,7 +57,7 @@ export default function RegisterPage() {
             {error && <p className="text-red-400 text-center text-sm">{error}</p>}
 
             {success && (
-                <p className="text-green-400 text-center text-sm">
+                <p className="text-green-400 text-center text-sm font-bold">
                     Registration successful! You can now <a href="/auth/login" className="underline">login</a>.
                 </p>
             )}

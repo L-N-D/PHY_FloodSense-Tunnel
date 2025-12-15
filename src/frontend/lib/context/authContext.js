@@ -7,7 +7,7 @@ const AuthContext = createContext(null);
 
 export function AuthContextProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // <--- thêm loading
+    const [loading, setLoading] = useState(true);
 
     const saveUser = (info) => setUser(info);
     const clearUser = () => setUser(null);
@@ -21,13 +21,15 @@ export function AuthContextProvider({ children }) {
                     cache: "no-store",
                 });
 
-                // console.log(res.data);
-                // console.log(res.status);
+                if (res.ok){
+                    setUser(res.payload);
+                }else{
+                    setUser(null);
+                }
 
-                setUser(res.data);
 
             } catch (err) {
-                console.log("Error fetching user:", err);
+                // console.log("Error fetching user:", err);
                 setUser(null);
             } finally {
                 setLoading(false);

@@ -23,14 +23,15 @@ export function useAuth() {
             });
 
             if (!res.ok){
-                setError(res.data.message);
+                setError(res.payload.message);
                 return null;
             }
             setError('');
+            setSuccess(true);
             return res;
 
         } catch (e) {
-            setError(`Register failed: ${res.data.message}`);
+            setError(`Register failed: ${res.payload.message}`);
             return null;
 
         } finally {
@@ -42,6 +43,7 @@ export function useAuth() {
     const login = async (username, password) => {
         setLoading(true);
         setError('');
+        setSuccess(false);
 
         try {
             const res = await api("/api/auth/login", {
@@ -50,18 +52,20 @@ export function useAuth() {
                 credentials: "include"
             });
 
-            if (res.error) {
-                setError(res.error);
+            if (!res.ok) {
+                setError(res.payload.message);
                 return null;
             }
 
 
-            saveUser(res.message || null);
+            saveUser(res.payload || null);
 
+            setSuccess(true);
             return res;
 
         } catch (e) {
             setError("Login failed");
+            setSuccess(false);
             return null;
 
         } finally {
@@ -71,7 +75,6 @@ export function useAuth() {
 
 
     const logout = async () => {
-        // setUser(null);
         setLoading(true);
         clearUser();
 
@@ -80,6 +83,7 @@ export function useAuth() {
             credentials: "include"
         });
         setLoading(false);
+        setSuccess(true);
         return res;
     };
 

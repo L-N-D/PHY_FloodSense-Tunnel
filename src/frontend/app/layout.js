@@ -1,5 +1,6 @@
 import './globals.css';
 import { AuthContextProvider } from '@/lib/context/authContext.js';
+import { ChatProvider } from '@/lib/context/chatContext.js';
 
 export const metadata = {
   title: 'Flood Tunnel',
@@ -24,11 +25,13 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthContextProvider>
-          <div className="flex">
-            <main className="min-w-screen flex flex-1">
-              {children}
-            </main>
-          </div>
+          <ChatProvider>
+            <div className="flex">
+              <main className="min-w-screen flex flex-1">
+                {children}
+              </main>
+            </div>
+          </ChatProvider>
         </AuthContextProvider>
       </body>
     </html>
