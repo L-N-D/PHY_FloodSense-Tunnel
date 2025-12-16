@@ -1,113 +1,102 @@
-// modules/auth/auth.controller.js
-import { loginService, logoutService, registerService } from './auth.service.js';
-import User from '../user/user.model.js';
+import {loginService, logoutService, registerService} from './auth.service.js';
 
 export const loginController = async (req, res) => {
-  const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(401).json('Username or Password missed');
-  }
+    const {username, password} = req.body;
 
-  try {
-    const result = await loginService(username, password);
-
-    if (!result) {
-      return res.status(400).json({ message: 'Login failed' });
+    if (!username || !password){
+        return res.status(401).json('Username or Password missed');
     }
 
-    const { accessToken, refreshToken, user } = result;
+    try {
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
+        const {accessToken, refreshToken, user} = await loginService(username, password);
 
-    res.setHeader('authorization', `Bearer ${accessToken}`);
+        if (!accessToken || !user) {
+            console.log(accessToken);
+            return res.status(400).json({ message: 'Login failed' });
+        }
 
-    // Trả thêm user + accessToken cho FE
-    res.status(200).json({
-      message: 'Login successful',
-      accessToken,
-      user: {
-        username: user.username,
-        email: user.email,
-        fcmToken: user.fcmToken,
-      },
-    });
-  } catch (err) {
-    console.log(`[Controller] | auth ${err.message}`);
-    res.status(400).json({ error: err.message });
-  }
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' 
+        });
+
+        res.cookie('authorization', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+        });
+
+        // res.setHeader('authorization',  `Bearer ${accessToken}`);
+
+        res.status(200).json({
+            message: 'Login successful',
+            username: user.username,
+            createdAt: user.createdAt,
+            email: user.email
+        });
+    }catch(err){
+        console.log(`[Controller] | auth ${err.message}`);
+        res.status(400).json({error: err.message});
+    }
+
 };
 
 export const registerController = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(401).json('Username or Password missed');
+    try {
+        const { username, password, email } = req.body;
+
+        if (!username || !password){
+            return res.status(401).json('Username or Password missed');
+        }
+
+        const result = await registerService(username, password, email);
+
+        if (!result) {
+            return res.status(400).json({ message: 'Register fail' });
+        }
+
+        if (result.success === false){
+            return res.status(400).json({message: 'User already exist'});
+        }
+
+        res.status(200).json({ message: 'Register successful' });
+    }catch(err){
+        console.error(err.message);
+        res.status(400).json({ error: err.message });
     }
-
-    const result = await registerService(username, email, password);
-
-    if (!result) {
-      return res.status(400).json({ message: 'Register fail' });
-    }
-
-    if (result.success === false) {
-      return res.status(400).json({ message: result.message || 'User already exist' });
-    }
-
-    res.status(200).json({ message: 'Register successful' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(400).json({ error: err.message });
-  }
-};
+    
+    
+}
 
 export const logoutController = async (req, res) => {
-  try {
-    const username = req.username;
 
-    await logoutService(username);
+    try {
 
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
+        const username = req.username;
 
-    res.status(200).json({ message: 'Logout successful' });
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ error: err.message });
-  }
-};
+        await logoutService(username);
 
-// Lưu FCM device token do FE gửi lên
-export const saveDeviceTokenController = async (req, res) => {
-  try {
-    const { fcmToken } = req.body;
-    const username = req.username;
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        res.clearCookie('authorization', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
 
-    if (!fcmToken) {
-      return res.status(400).json({ message: 'Missing fcmToken' });
+        res.status(200).json({ message: 'Logout successful' });
+
+    }catch(err){
+        console.log(err);
+        res.status(400).json({ error: err.message });
     }
-
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.fcmToken = fcmToken;
-    await user.save();
-
-    return res.status(200).json({ message: 'Device token saved' });
-  } catch (err) {
-    console.error('[Controller] saveDeviceToken', err);
-    return res.status(500).json({ error: err.message });
-  }
-};
+    
+}
