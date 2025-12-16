@@ -1,0 +1,50 @@
+const widgetPanel = `
+  relative w-[700px] min-h-[180px] 
+  border border-white/40 rounded-xl 
+  flex flex-col items-center 
+  bg-white/5 backdrop-blur-md
+  shadow-[inset_0_1px_0px_rgba(255,255,255,0.6),0_0_8px_rgba(0,0,0,0.2),0_6px_18px_rgba(0,0,0,0.3)]
+  overflow-hidden
+  before:content-[''] before:absolute before:inset-0 before:rounded-xl
+  before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-transparent 
+  before:opacity-60 before:pointer-events-none
+  hover:bg-white/10 transition-all duration-300
+`;
+
+export default function WaterLeakPage() {
+    return (
+        <div className="mt-[60px] flex flex-col gap-10 flex-1 h-screen bg-[#060C11] 
+                        justify-center items-center text-white px-4">
+
+            <div className={widgetPanel}>
+
+                <h2 className="text-2xl font-semibold mt-4">Water Leak</h2>
+
+                <div className="w-full px-8 mt-6 flex justify-between items-center">
+
+                    {/* LEFT: Temperature */}
+                    <div className="flex items-center gap-3">
+                        <i className="fa-solid fa-eye-dropper text-red-400 text-2xl"></i>
+
+                        <div>
+                            <div className="text-gray-300 text-xl">Status</div>
+                            <div className="text-white text-2xl font-semibold">Dry</div>
+                        </div>
+                    </div>
+
+                    <div className="text-right">
+                        <div className="text-gray-400 text-sm">Updated at</div>
+                        <div className="text-gray-200 text-sm">15:00 - 20/11/2025</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="w-[150px] h-[50px] border border-white rounded-4xl flex left-0 justify-center items-center">
+                <h2 className="text-2xl">Logs</h2>    
+            </div>
+
+        </div>
+    );
+}

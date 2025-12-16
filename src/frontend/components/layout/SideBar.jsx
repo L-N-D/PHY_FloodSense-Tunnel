@@ -27,7 +27,7 @@ const SideBar = () => {
             <div className="w-full flex flex-col items-center">
 
                 <div className={`${liquidGlassClasses} mx-auto mt-0 w-[90%]`}>
-                    <a href="/logs" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                    <a href="/dashboard/logs" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                         <i className="fa-solid fa-book"></i>
                         Logs
                     </a>
@@ -39,37 +39,37 @@ const SideBar = () => {
 
                 {sensorToggle && (
                     <ul className="relative w-[90%] mx-auto mt-1 flex flex-col items-end">
-                        <a href="/dashboard" className={liquidGlassClasses.replace("mt-4", "mt-0")}> Temperature sensor</a>
-                        <a href="/dashboard" className={liquidGlassClasses}>Water level sensor</a>
-                        <a href="/dashboard" className={liquidGlassClasses}>Smoke detector</a>
-                        <a href="/dashboard" className={liquidGlassClasses}>Water leak detector</a>
+                        <a href="/dashboard/logs/temperature" className={liquidGlassClasses.replace("mt-4", "mt-0")}> Temperature sensor</a>
+                        <a href="/dashboard/logs/waterLevel" className={liquidGlassClasses}>Water level sensor</a>
+                        <a href="/dashboard/logs/smokeDetector" className={liquidGlassClasses}>Smoke detector</a>
+                        <a href="/dashboard/logs/waterLeak" className={liquidGlassClasses}>Water leak detector</a>
                     </ul>
                 )}
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/notification" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/notification" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-envelope"></i>
                     Notification
                 </a>
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/devices" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/devices" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-hard-drive"></i>
                     Devices
                 </a>
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/profile" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/profile" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-address-card"></i>
                     Profile
                 </a>
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/abouts" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/abouts" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-circle-info"></i>
                     Abouts
                 </a>

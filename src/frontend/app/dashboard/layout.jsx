@@ -1,5 +1,7 @@
+'use client';
 import SideBar from "@/components/layout/SideBar";
 import NavBar from "@/components/layout/NavBar";
+import ChatBubble from "@/components/ui/ChatBubble";
 
 export default function HomeLayout({ children }) {
   return (
@@ -9,17 +11,15 @@ export default function HomeLayout({ children }) {
         <NavBar />
       </div>
 
-      <div className="flex">
-
-        <div className="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-64 z-40">
-          <SideBar />
-        </div>
-
-        <main className="mt-[60px] ml-[124px] min-w-screen flex-1 w-full justify-center items-center">
-          {children}
-        </main>
-
+      <div className="fixed top-[60px] left-0 h-[calc(100vh-60px)] w-64 z-40">
+        <SideBar />
       </div>
+
+      <main className=" pl-60 min-w-screen flex-1 w-full justify-center items-center bg-[#060C11]">
+        <ChatBubble />
+        {children}
+      </main>
+
     </div>
   );
 }
