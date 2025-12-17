@@ -2,11 +2,15 @@ import express, { json } from 'express';
 import cors from 'cors';
 import cookiesParser from 'cookie-parser';
 import commonRoute from './routes/index.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const client = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:3000",   // domain FE
-    credentials: true,                 // QUAN TRỌNG
+    origin: client,
+    credentials: true,
 }));
 app.use(json());
 app.use(cookiesParser());

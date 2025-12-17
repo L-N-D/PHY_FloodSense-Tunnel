@@ -2,6 +2,8 @@ import mqtt from 'mqtt';
 import { handleAlert } from '../services/notification.service.js';
 import SensorLog from '../modules/sensors/sensors.model.js';
 import AlarmLog from '../modules/alarm/alarm.model.js';
+import { sendSensorUpdate } from '../modules/sensors/sensor.service.js';
+import { sendDeviceUpdate } from '../modules/devices/devices.service.js';
 
 const MQTT_HOST = process.env.MQTT_HOST;
 const MQTT_PORT = process.env.MQTT_PORT;
@@ -22,6 +24,14 @@ const SENSOR_TOPICS = [
   'esp32/data/pump',
   'esp32/data/fan',
 ];
+
+const DEVICE = [
+  'gate',
+  'pump',
+  'fan',
+];
+
+const SENSORS = ['temperature', 'humidity', 'water', 'smoke'];
 
 const ACK_TOPICS = [
   'esp32/ack/gate',
@@ -58,7 +68,20 @@ client.on('message', async (topic, message) => {
 
     // 2) SENSOR DATA: lưu log
     if (SENSOR_TOPICS.includes(topic)) {
-      await SensorLog.create({ topic, value: payloadStr, category: 'sensor' }).catch(console.error);
+      const sensorName = topic.split('/').pop();
+      console.log('Receive: ', sensorName, ' ', payloadStr);
+      const payload = {
+        topic: topic,
+        sensorName: sensorName,
+        value: payloadStr
+      };
+      if (DEVICE.includes(sensorName)){
+        sendDeviceUpdate(payload);
+      }
+      if (SENSORS.includes(sensorName)) {
+        sendSensorUpdate(payload);
+      }
+      // await SensorLog.create({ topic, value: payloadStr, category: 'sensor' }).catch(console.error);
       return;
     }
 
