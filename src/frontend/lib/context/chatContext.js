@@ -14,9 +14,6 @@ const WELCOME_MESSAGE = {
 export function ChatProvider({ children }) {
   const [messages, setMessages] = useState([]);
 
-  /**
-   * 🔁 Load history khi mở app
-   */
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
 
@@ -28,9 +25,6 @@ export function ChatProvider({ children }) {
     }
   }, []);
 
-  /**
-   * 💾 Save history mỗi khi messages thay đổi
-   */
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   }, [messages]);
@@ -39,7 +33,7 @@ export function ChatProvider({ children }) {
     onMessage: (data) => {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: data.answer }
+        { sender: "bot", text: data }
       ]);
     },
     onError: () => {
@@ -50,9 +44,6 @@ export function ChatProvider({ children }) {
     }
   });
 
-  /**
-   * ➕ Thêm user message + gửi context
-   */
   const addUserMessage = (text) => {
     const newMessages = [...messages, { sender: "user", text }];
     setMessages(newMessages);

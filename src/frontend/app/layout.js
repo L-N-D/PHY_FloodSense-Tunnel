@@ -1,6 +1,7 @@
 import './globals.css';
 import { AuthContextProvider } from '@/lib/context/authContext.js';
 import { ChatProvider } from '@/lib/context/chatContext.js';
+import { SensorContextProvider } from '@/lib/context/sensorContext';
 
 export const metadata = {
   title: 'Flood Tunnel',
@@ -26,11 +27,13 @@ export default function RootLayout({ children }) {
       <body>
         <AuthContextProvider>
           <ChatProvider>
-            <div className="flex">
-              <main className="min-w-screen flex flex-1">
-                {children}
-              </main>
-            </div>
+            <SensorContextProvider>
+              <div className="flex">
+                <main className="min-w-screen flex flex-1">
+                  {children}
+                </main>
+              </div>
+            </SensorContextProvider>
           </ChatProvider>
         </AuthContextProvider>
       </body>
