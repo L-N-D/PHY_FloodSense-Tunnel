@@ -36,3 +36,15 @@ export const sendSensorUpdate = (payload) => {
 };
 
 
+export const getLogs = async (sensorName) => {
+
+  const logs = await sensorsModel.find({ sensor: sensorName })
+  .sort({ ts: -1 })
+  .limit(60)
+  .select({ ts: 1, value: 1, _id: 0 })
+  .lean();
+
+  return logs;
+
+}
+

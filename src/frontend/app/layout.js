@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           <ChatProvider>
             <SensorContextProvider>
               <div className="flex">
-                <main className="min-w-screen flex flex-1">
+                <main className="min-w-screen bg-black flex flex-1">
                   {children}
                 </main>
               </div>

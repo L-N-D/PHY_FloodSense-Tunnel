@@ -1,3 +1,9 @@
+'use client';
+import TimeSeriesChart from "@/components/ui/TimeSeriesChart";
+import { useEffect } from "react";
+import { useLogs } from "@/hook/useLogs";
+import Spinner from "@/components/ui/Loading";
+
 const widgetPanel = `
   relative w-[700px] min-h-[180px] 
   border border-white/40 rounded-xl 
@@ -12,6 +18,13 @@ const widgetPanel = `
 `;
 
 export default function TemperaturePage() {
+
+    const { data, loading, error, getLogs } = useLogs();
+
+    useEffect(() => {
+        getLogs('temperature');
+    }, []);
+
     return (
         <div className="mt-[60px] flex flex-col gap-10 flex-1 h-screen bg-[#060C11] 
                         justify-center items-center text-white px-4">
@@ -42,7 +55,11 @@ export default function TemperaturePage() {
             </div>
 
             <div className="w-[150px] h-[50px] border border-white rounded-4xl flex left-0 justify-center items-center">
-                <h2 className="text-2xl">Logs</h2>    
+                <h2 className="text-2xl">Logs</h2>
+            </div>
+
+            <div className="w-[1200px] h-[600px]">
+                {loading ? (<Spinner />) : (<TimeSeriesChart data={data} />)}
             </div>
 
         </div>
