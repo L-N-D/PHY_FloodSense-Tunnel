@@ -1,4 +1,4 @@
-import {loginService, logoutService, registerService} from './auth.service.js';
+import {loginService, logoutService, registerService, resetPasswordService} from './auth.service.js';
 
 export const loginController = async (req, res) => {
 
@@ -99,4 +99,19 @@ export const logoutController = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
     
+}
+
+export const resetPasswordController = async (req, res) => {
+
+    const {password} = req.body;
+    const username = req.username;
+
+    const ressult = await resetPasswordService(username, password);
+
+    if (!ressult){
+        return res.status(500).json({message: 'Password change fail'});
+    }
+
+    res.status(200).json('Password changed successful');
+
 }

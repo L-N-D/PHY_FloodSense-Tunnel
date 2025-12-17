@@ -31,6 +31,22 @@ export const registerService = async (username, password, email) => {
 
 }
 
+export const resetPasswordService = async (username, password) => {
+
+    const user = await User.findOne({ username});
+
+    if(!user){
+        return null;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRound);
+    user.password = hashedPassword;
+    await user.save();
+
+    return user;
+
+}
+
 export const loginService = async (username, password) => {
 
     try {

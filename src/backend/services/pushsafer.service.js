@@ -43,7 +43,7 @@ Time: ${formatVNTime(alert.timestamp)}
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
 
-    console.log('Pushsafer sent:', res.data);
+    // console.log('Pushsafer sent:', res.data);
   } catch (err) {
     console.error('[Pushsafer] Error:', err.response?.data || err.message);
   }

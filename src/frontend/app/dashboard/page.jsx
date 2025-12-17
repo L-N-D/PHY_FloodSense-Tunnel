@@ -5,6 +5,7 @@ import TextDisplay from "@/components/ui/TextDisplay";
 import DeviceStatus from "@/components/ui/DeviceStatus";
 import { useState, useEffect } from "react";
 import useDashboard from "@/hook/useDashboard";
+import { useAPI } from "@/hook/useApi";
 
 const widgetStyle = "w-[422px] h-[204px] border border-white rounded rounded-lg flex justify-center bg-white/5 backdrop-blur-md border border-white/40 rounded-xl shadow-[inset_0_1px_0px_rgba(255,255,255,0.7),0_0_10px_rgba(0,0,0,0.1),0_4px_10px_rgba(0,0,0,0.15)] before:content-[''] before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/70 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none hover:bg-white/30 transition-all duration-300 after:content-[''] after:absolute after:inset-0 after:rounded-xl after:bg-gradient-to-tl after:from-white/40 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none";
 const widgetDevice = "w-[150px] h-[150px] border border-white rounded rounded-lg flex justify-center bg-white/5 backdrop-blur-md border border-white/40 rounded-xl shadow-[inset_0_1px_0px_rgba(255,255,255,0.7),0_0_10px_rgba(0,0,0,0.1),0_4px_10px_rgba(0,0,0,0.15)] before:content-[''] before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/70 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none hover:bg-white/30 transition-all duration-300 after:content-[''] after:absolute after:inset-0 after:rounded-xl after:bg-gradient-to-tl after:from-white/40 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none";
@@ -14,6 +15,8 @@ export default function HomePage() {
 
   const [warningCount, setWarningCount] = useState(0);
 
+  const { getWarning, loading } = useAPI();
+
   const tempData = useDashboard('temperature');
   const waterLevelData = useDashboard('water');
   const smokeData = useDashboard('smoke');
@@ -22,6 +25,20 @@ export default function HomePage() {
   const motorStatus = Boolean(useDashboard('pump'));
   const lightStatus = Boolean(useDashboard('light'));
   const fanStatus = Boolean(useDashboard('fan'));
+
+  useEffect(() => {
+    const fetchWarning = async () => {
+      try {
+        const count = await getWarning();
+        // console.log(count.payload.total);
+        setWarningCount(count.payload.total)
+      } catch (err) {
+        console.error("Failed to fetch warning count:", err);
+      }
+    };
+
+    fetchWarning();
+  }, []);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[#060C11] justify-center items-center border border-white gap-20">
@@ -50,10 +67,10 @@ export default function HomePage() {
           <DeviceStatus label="Fan" isOn={fanStatus} iconName="fa-fan" />
         </div>
         <div className={widgetDevice}>
-          <DeviceStatus label="Motor" isOn={motorStatus} iconName="fa-faucet" />
+          <DeviceStatus label="Pump" isOn={motorStatus} iconName="fa-faucet" />
         </div>
         <div className={widgetDevice}>
-          <DeviceStatus label="Door" isOn={doorStatus} iconName="fa-door-open" />
+          <DeviceStatus label="Gate" isOn={doorStatus} iconName="fa-door-open" />
         </div>
         <div className={widgetDevice}>
           <DeviceStatus label="Light" isOn={lightStatus} iconName="fa-lightbulb" />

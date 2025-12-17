@@ -50,9 +50,6 @@ export function ChatProvider({ children }) {
     sendMessage(text, newMessages);
   };
 
-  /**
-   * 🧹 Clear chat (vẫn giữ lời chào)
-   */
   const clearChat = () => {
     setMessages([WELCOME_MESSAGE]);
     localStorage.removeItem(STORAGE_KEY);

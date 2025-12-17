@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { chatController } from "../modules/chat/chat.controller.js";
+import { controlDeviceController } from "../modules/devices/devices.controller.js";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -35,6 +36,16 @@ export const initSocket = (httpServer) => {
             chatController(client.userId, payload);
         })
 
+        client.on('device:cmd', async (payload) => {
+            try {
+                // console.log(payload);
+                await controlDeviceController(payload);
+            } catch (err) {
+                console.error('Device cmd error:', err);
+                client.emit('device:error', { message: 'Control device failed' });
+            }
+        });
+
         client.on("disconnect", () => {
             console.log("Disconnected:", client.id);
         });
@@ -43,6 +54,6 @@ export const initSocket = (httpServer) => {
 }
 
 export const getSocket = () => {
-  if (!server) throw new Error("Socket.io not initialized");
-  return server;
+    if (!server) throw new Error("Socket.io not initialized");
+    return server;
 };

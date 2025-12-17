@@ -3,6 +3,7 @@ import TimeSeriesChart from "@/components/ui/TimeSeriesChart";
 import { useEffect } from "react";
 import { useLogs } from "@/hook/useLogs";
 import Spinner from "@/components/ui/Loading";
+import useDashboard from "@/hook/useDashboard";
 
 const widgetPanel = `
   relative w-[700px] min-h-[180px] 
@@ -20,6 +21,8 @@ const widgetPanel = `
 export default function TemperaturePage() {
 
     const { data, loading, error, getLogs } = useLogs();
+
+    const tempData = useDashboard('temperature');
 
     useEffect(() => {
         getLogs('temperature');
@@ -41,13 +44,13 @@ export default function TemperaturePage() {
 
                         <div>
                             <div className="text-gray-300 text-xl">Temperature</div>
-                            <div className="text-white text-2xl font-semibold">25°C</div>
+                            <div className="text-white text-2xl font-semibold">{tempData} °C</div>
                         </div>
                     </div>
 
                     <div className="text-right">
                         <div className="text-gray-400 text-sm">Updated at</div>
-                        <div className="text-gray-200 text-sm">15:00 - 20/11/2025</div>
+                        <div className="text-sm text-green-700">Real time</div>
                     </div>
 
                 </div>

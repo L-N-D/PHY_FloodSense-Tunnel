@@ -15,7 +15,7 @@ export function useUser() {
         setError('');
 
         try {
-            const res = await api('/api/user/resetPassword', {
+            const res = await api('/api/auth/resetPassword', {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

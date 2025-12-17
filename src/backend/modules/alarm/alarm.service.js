@@ -28,3 +28,15 @@ export async function countAlarmsTodayService() {
     flood,
   };
 }
+
+export const getNotificationService = async () => {
+
+  const latestLogs = await AlarmLog
+    .find()
+    .sort({ createdAt: -1 })
+    .select('type message createdAt -_id')
+    .limit(10)
+    .lean();
+
+    return latestLogs;
+}
