@@ -18,7 +18,7 @@ const SideBar = () => {
             </div>
 
             <div className={liquidGlassClasses}>
-                <a href="/analysis" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
+                <a href="/dashboard/analysis" className="no-underline flex ml-6 gap-2 items-center w-full h-full">
                     <i className="fa-solid fa-magnifying-glass-chart"></i>
                     Analysis
                 </a>

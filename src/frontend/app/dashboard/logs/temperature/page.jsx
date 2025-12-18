@@ -50,7 +50,7 @@ export default function TemperaturePage() {
 
                     <div className="text-right">
                         <div className="text-gray-400 text-sm">Updated at</div>
-                        <div className="text-sm text-green-700">Real time</div>
+                        <div className="text-green-700 text-sm font-bold">Real Time</div>
                     </div>
 
                 </div>

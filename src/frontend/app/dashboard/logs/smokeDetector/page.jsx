@@ -3,6 +3,7 @@ import TimeSeriesChart from "@/components/ui/TimeSeriesChart";
 import { useEffect } from "react";
 import { useLogs } from "@/hook/useLogs";
 import Spinner from "@/components/ui/Loading";
+import useDashboard from "@/hook/useDashboard";
 const widgetPanel = `
   relative w-[700px] min-h-[180px] 
   border border-white/40 rounded-xl 
@@ -19,6 +20,7 @@ const widgetPanel = `
 export default function SmokeDetectorPage() {
 
     const { data, loading, error, getLogs } = useLogs();
+    const smokeData = useDashboard('smoke');
 
     useEffect(() => {
         getLogs("smoke");
@@ -41,13 +43,13 @@ export default function SmokeDetectorPage() {
 
                         <div>
                             <div className="text-gray-300 text-xl">Smoke</div>
-                            <div className="text-white text-2xl font-semibold">25 %</div>
+                            <div className="text-white text-2xl font-semibold">{smokeData} ppm</div>
                         </div>
                     </div>
 
                     <div className="text-right">
                         <div className="text-gray-400 text-sm">Updated at</div>
-                        <div className="text-gray-200 text-sm">15:00 - 20/11/2025</div>
+                        <div className="text-green-700 text-sm font-bold">Real Time</div>
                     </div>
 
                 </div>

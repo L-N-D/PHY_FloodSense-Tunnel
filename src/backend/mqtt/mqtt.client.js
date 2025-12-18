@@ -31,7 +31,7 @@ const DEVICE = [
   'fan',
 ];
 
-const SENSORS = ['temperature', 'humidity', 'water', 'smoke'];
+const SENSORS = ['temperature', 'humidity', 'water', 'smoke', 'rain'];
 
 const ACK_TOPICS = [
   'esp32/ack/gate',

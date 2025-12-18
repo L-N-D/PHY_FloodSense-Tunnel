@@ -28,7 +28,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex justify-between">
-              <span>Đoàn Quang Minh Triết</span>
+              <span>Đởm Quang Minh Triết</span>
               <span>23127131</span>
             </div>
 
@@ -72,7 +72,6 @@ export default function AboutPage() {
             <ul className="list-disc ml-6 text-gray-300">
               <li>Water level sensor</li>
               <li>Temperature sensor</li>
-              <li>Motion detection sensor</li>
               <li>Water leak sensor</li>
             </ul>
 

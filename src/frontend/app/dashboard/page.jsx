@@ -21,10 +21,12 @@ export default function HomePage() {
   const waterLevelData = useDashboard('water');
   const smokeData = useDashboard('smoke');
 
-  const doorStatus = Boolean(useDashboard('gate'));
-  const motorStatus = Boolean(useDashboard('pump'));
-  const lightStatus = Boolean(useDashboard('light'));
-  const fanStatus = Boolean(useDashboard('fan'));
+  const doorStatus = Boolean(Number(useDashboard('gate')));
+  const motorStatus = Boolean(Number(useDashboard('pump')));
+  const rainSatus = Boolean(Number(useDashboard('rain')));
+  const fanStatus = Boolean(Number(useDashboard('fan')));
+  // console.log();
+  // console.log(useDashboard('gate'), typeof useDashboard('gate'));
 
   useEffect(() => {
     const fetchWarning = async () => {
@@ -49,7 +51,7 @@ export default function HomePage() {
         </div>
         <div className={widgetStyle}>
           {/* gán data nước */}
-          <GaugeChart value={waterLevelData} label="Water Level (mm)" />
+          <GaugeChart value={waterLevelData} label="Water Level (cm)" />
         </div>
       </div>
 
@@ -73,7 +75,7 @@ export default function HomePage() {
           <DeviceStatus label="Gate" isOn={doorStatus} iconName="fa-door-open" />
         </div>
         <div className={widgetDevice}>
-          <DeviceStatus label="Light" isOn={lightStatus} iconName="fa-lightbulb" />
+          <DeviceStatus label="Rain" isOn={rainSatus} iconName="fa-droplet" />
         </div>
       </div>
     </div>

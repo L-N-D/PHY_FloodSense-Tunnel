@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "../../../hook/useAuth.js";
 import { useRouter } from "next/navigation.js";
+import Spinner from "@/components/ui/Loading.jsx";
 
 export default function LoginPage() {
 
@@ -35,6 +36,8 @@ export default function LoginPage() {
         }
 
     };
+
+    if (loading){return <div className="w-full h-full"> <Spinner /> </div>}
 
     return (
         <form 

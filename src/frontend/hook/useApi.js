@@ -63,11 +63,42 @@ export function useAPI() {
 
     };
 
+    const getSystemLogs = async () => {
+
+        setError('');
+        setLoading(true);
+
+        try{
+
+            const res = await api('/api/system/systemLogs', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!res.ok){
+                setError('Proccessing fetch fail');
+                return [];
+            }
+
+            setError('');
+            return res.payload;
+
+        }catch (e) {
+            setError(`Register failed: ${res.payload.message}`);
+            return null;
+
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
     return {
         loading,
         error,
         getWarning,
-        getNotification
+        getNotification,
+        getSystemLogs
     }
 
 }

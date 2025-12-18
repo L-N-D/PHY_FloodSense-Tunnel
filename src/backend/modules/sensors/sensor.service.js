@@ -31,6 +31,7 @@ export const saveDataIfNeeded = async (data) => {
 
 export const sendSensorUpdate = (payload) => {
   const socket = getSocket();
+  saveDataIfNeeded(payload);
   console.log('Send data: ',payload.sensorName, '| ', payload.value);
   socket.to('dashboard:sensor').emit('sensor:update', {sensorName: payload.sensorName, value: payload.value});
 };

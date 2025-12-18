@@ -48,6 +48,8 @@ export function useDevices() {
     if (!commonSocket || !connected) return;
 
     console.log('send cmd');
+    console.log(payload.deviceName);
+    console.log(payload.status ? 1 : 0);
 
     commonSocket.emit("device:cmd", {
       deviceName: payload.deviceName,

@@ -19,13 +19,19 @@ export default function TimeSeriesChart({ data = [] }) {
             const Plotly = await import('plotly.js-dist');
 
             // Extract timestamps and values
-            const timestamps = data.map(item => item.timestamp);
+            const timestamps= data.map(item =>
+                new Date(item.ts).toLocaleString("vi-VN", {
+                    timeZone: "Asia/Ho_Chi_Minh",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            );
             const values = data.map(item => item.value);
 
             // Simple line chart
             const trace = {
-                x: timestamps,
-                y: values,
+                x: timestamps.reverse(),
+                y: values.reverse(),
                 type: 'scatter',
                 mode: 'lines+markers',
                 line: { color: '#3b82f6', width: 2 },
