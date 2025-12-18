@@ -29,7 +29,7 @@ export function ChatProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   }, [messages]);
 
-  const { sendMessage } = useChatSocket({
+  const { sendMessage, isConnected } = useChatSocket({
     onMessage: (data) => {
       setMessages((prev) => [
         ...prev,
@@ -44,6 +44,8 @@ export function ChatProvider({ children }) {
     }
   });
 
+  // const {isChatOn} = useChatSocket();
+
   const addUserMessage = (text) => {
     const newMessages = [...messages, { sender: "user", text }];
     setMessages(newMessages);
@@ -56,7 +58,7 @@ export function ChatProvider({ children }) {
   };
 
   return (
-    <ChatContext.Provider value={{ messages, addUserMessage, clearChat }}>
+    <ChatContext.Provider value={{ messages, addUserMessage, clearChat, isConnected, }}>
       {children}
     </ChatContext.Provider>
   );

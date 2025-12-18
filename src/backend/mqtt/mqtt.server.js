@@ -20,10 +20,12 @@ export const sendCmdToEsp = ({ deviceName, state }) => {
 
     const topic = `${CMD_DEVICE_TOPICS}/${deviceName}`;
 
-    const payload = JSON.stringify({
-        deviceName,
-        state,
-    });
+    // const payload = JSON.stringify({
+    //     deviceName,
+    //     state,
+    // });
+
+    const payload = state ? '1' : '0';
 
 
     client.publish(topic, payload, { qos: 1 }, (err) => {

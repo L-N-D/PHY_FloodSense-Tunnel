@@ -134,7 +134,7 @@ shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]
 
 
 export default function ChatBubble() {
-    const { messages, addUserMessage, clearChat } = useChat();
+    const { messages, addUserMessage, clearChat, isConnected } = useChat();
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState("");
     const endRef = useRef(null);
@@ -173,8 +173,11 @@ export default function ChatBubble() {
                             <span className="text-sm font-bold text-white">
                                 System Chatbot
                             </span>
-                            <span className="text-xs font-bold text-green-700">
-                                Online
+                            <span
+                                className={`text-xs font-bold ${isConnected ? "text-green-600" : "text-red-600"
+                                    }`}
+                            >
+                                {isConnected ? "Online" : "Offline"}
                             </span>
                         </div>
                         <button
