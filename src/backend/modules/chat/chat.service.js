@@ -175,7 +175,7 @@ async function queryDB(type, username, target = null) {
       }
 
       case QUERY_TYPES.ALL_DEVICES: {
-        const deviceTypes = ["fan", "pump", "light", "buzzer"];
+        const deviceTypes = ["fan", "pump", "gate", "rain"];
         const latestDevices = await Promise.all(
           deviceTypes.map(d =>
             devicesModel.findOne({ device: d }).sort({ ts: -1 }).lean()
