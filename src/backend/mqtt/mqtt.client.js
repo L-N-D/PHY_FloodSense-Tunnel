@@ -40,22 +40,35 @@ const ACK_TOPICS = [
   'esp32/ack/buzzer',
 ];
 
-const client = mqtt.connect(`mqtt://${MQTT_HOST}:${MQTT_PORT}`, {
-  username: MQTT_USERNAME,
-  password: MQTT_PASSWORD,
-  reconnectPeriod: 2000,
-});
+let client = null;
 
-client.on('connect', () => {
-  console.log('Connected to MQTT broker');
+export const initMqtt = () => {
+  if (client) return client;
 
-  client.subscribe([ALARM_TOPIC, ...SENSOR_TOPICS, ...ACK_TOPICS], (err) => {
-    if (err) console.error('MQTT subscribe error:', err);
-    else console.log('Subscribed ALARM + SENSOR + ACK topics OK');
+  client = mqtt.connect(`mqtt://${MQTT_HOST}:${MQTT_PORT}`, {
+    username: MQTT_USERNAME,
+    password: MQTT_PASSWORD,
+    reconnectPeriod: 2000,
   });
-});
 
-client.on('message', async (topic, message) => {
+  client.on('connect', () => {
+    console.log('Connected to MQTT broker');
+
+    client.subscribe([ALARM_TOPIC, ...SENSOR_TOPICS, ...ACK_TOPICS], (err) => {
+      if (err) console.error('MQTT subscribe error:', err);
+      else console.log('Subscribed ALARM + SENSOR + ACK topics OK');
+    });
+  });
+
+  client.on('message', handleMessage);
+
+  return client;
+
+}
+
+
+const handleMessage = async (topic, message) => {
+
   const payloadStr = message.toString();
 
   try {
@@ -75,7 +88,7 @@ client.on('message', async (topic, message) => {
         sensorName: sensorName,
         value: payloadStr
       };
-      if (DEVICE.includes(sensorName)){
+      if (DEVICE.includes(sensorName)) {
         sendDeviceUpdate(payload);
       }
       if (SENSORS.includes(sensorName)) {
@@ -101,7 +114,7 @@ client.on('message', async (topic, message) => {
             message: obj.message || '',
           };
         }
-      } catch (_) {}
+      } catch (_) { }
 
       // legacy string fallback
       if (!alert && (payloadStr === 'fire' || payloadStr === 'flood')) {
@@ -132,8 +145,5 @@ client.on('message', async (topic, message) => {
   } catch (err) {
     console.error('Error handling MQTT message:', err);
   }
-});
 
-
-
-export default client;
+}

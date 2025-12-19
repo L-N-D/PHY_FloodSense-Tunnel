@@ -2,7 +2,7 @@
 import app from './app.js';
 import dotenv from 'dotenv';
 import connectDB from './config/db.config.js';
-import './mqtt/mqtt.client.js'; // NEW: tự động connect MQTT
+import { initMqtt } from './mqtt/mqtt.client.js';
 import http from 'http';
 import { initSocket } from './services/socket.service.js';
 
@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 1307;
 
 const server = http.createServer(app);
 initSocket(server);
+initMqtt();
 
 app.get('/', (req, res) => {
   res.send('Backend is running');

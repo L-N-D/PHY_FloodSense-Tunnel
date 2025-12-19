@@ -1,4 +1,4 @@
-import client from "./mqtt.client.js";
+import {initMqtt} from "./mqtt.client.js";
 
 const CMD_DEVICE_TOPICS = 'esp32/cmd';
 
@@ -12,6 +12,7 @@ const DEVICE = [
 export const sendCmdToEsp = ({ deviceName, state }) => {
 
     // console.log(state);
+    const client = initMqtt();
 
     if (!DEVICE.includes(deviceName)) {
         console.log('[mqtt.server.js] | Invalid device');
